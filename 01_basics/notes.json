@@ -1,1 +1,18 @@
-[{"title":"List","body":"Sweater, Pants"}]
+[
+    {
+        "title": "List",
+        "body": "Sweater, Pants"
+    },
+    {
+        "title": "remove",
+        "body": "pants, shirt"
+    },
+    {
+        "title": "Note title",
+        "body": "pants, shirt"
+    },
+    {
+        "title": "Big Thing",
+        "body": "Raj, Book"
+    }
+]
