@@ -1,9 +1,14 @@
 const express = require('express');
 const routs = express.Router();
 
-const userCntroller = require('../controller/user');
+const userController = require('../controller/user');
 
-routs.post('/user', userCntroller.user);
+routs.post('/user', userController.user);
+
 routs.get('/getUser', userController.getUser);
+
+routs.put('/updateUser/:id', userController.updateUser);
+
+routs.delete('/deleteUser/:id', userController.deleteUser);
 
 module.exports = routs;
