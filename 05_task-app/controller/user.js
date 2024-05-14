@@ -6,6 +6,7 @@ module.exports.user = async (req, res) => {
         if(data){
             return res.status(200).json({msg : 'User already registerd', status : 0});
         } else{
+            
             let userData = await user.create(req.body);
             if(userData){
                 return res.status(200).json({msg : `User register successfully`, status : 1, UserData : userData});
