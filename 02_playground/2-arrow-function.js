@@ -11,8 +11,8 @@
 // console.log(square(2))
 
 const event = {
-    name: 'Party',
-    guestList: ['Ram', 'Raj', 'Rahul'],
+    name: 'Birthday Party',
+    guestList: ['Andrew', 'Jen', 'Mike'],
     printGuestList() {
         console.log('Guest list for ' + this.name)
         
