@@ -19,3 +19,18 @@ module.exports.user = async (req, res) => {
         return res.status(200).json({msg : 'Something wrong', status : 0});
     }
 }
+
+module.exports.getUser = async(req,res)=>{
+    try {
+        let userData = await user.find({});
+        if(userData){
+            return res.status(200).json({msg : 'Record are here', status : 1, UserData : userData});
+        }
+        else{
+            return res.status(200).json({msg : 'Record not found', status : 0});
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(200).json({msg : 'Something wrong', status : 0});
+    }
+}
