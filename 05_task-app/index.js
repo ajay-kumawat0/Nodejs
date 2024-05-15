@@ -23,5 +23,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', require('./routes/user'));
+app.use('/', require('./routes/task'));
 
 app.listen(port, (err)=> err ? console.log(err):console.log(`Server is connected on port ${port}`))
