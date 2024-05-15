@@ -21,6 +21,27 @@ module.exports.user = async (req, res) => {
     }
 }
 
+module.exports.login = async(req,res)=>{
+    try {
+        let userData = await user.findOne({email : req.body.email});
+        if(userData){
+            if(await bcrypt.compare(req.body.password, userData.password)){
+                let token = await jwt.sign({userData }, 'USER', {expiresIn : '1h'});
+                return res.status(200).json({ msg: 'User login successfully', status: 1, Login : userData , Token : token});
+            }
+            else{
+                return res.status(400).json({ msg: 'Incorrect password', status: 0 });
+            }
+        }
+        else{
+            return res.status(400).json({ msg: 'Invalid email', status: 0 });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ msg: 'Something wrong', status: 0 });
+    }
+}
+
 module.exports.getUser = async(req,res)=>{
     try {
         let userData = await user.find({});
