@@ -14,8 +14,12 @@ let count = 0;
 
 io.on('connection', (socket)=>{
     console.log('socketio is connection');
-
     socket.emit('countUpdated', count);
+    
+    socket.on('increment', ()=>{
+        count++
+        socket.emit('countUpdated', count);
+    })
 })
 
 server.listen(port, (err)=>{
