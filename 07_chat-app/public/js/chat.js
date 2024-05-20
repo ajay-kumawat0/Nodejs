@@ -16,48 +16,48 @@ const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true }
 
 socket.on('message', (message) => {
     console.log(message);
-    const html = Mustache.render(messageTemplates,{
-        message
+    const html = Mustache.render(messageTemplates, {
+        message: message.text,
+        createdAt: moment(message.createdAt).format('h:m a')
     });
     $messages.insertAdjacentHTML('beforeend', html)
 })
 
-socket.on('locationMessage', (url) => {
-    console.log(url);
+socket.on('locationMessage', (message) => {
+    console.log(message);
     const html = Mustache.render(locationMessageTemplate, {
-        url
+        url: message.url,
+        createdAt: moment(message.createdAt).format('h:m a')
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
 
-document.querySelector('#message-form').addEventListener('submit', (e) => {
+$messageFrom.addEventListener('submit', (e) => {
     e.preventDefault()
 
     // disable
     $messageFromButton.setAttribute('disabled', 'disabled');
 
-    // const message = document.querySelector('input').value;
     const message = e.target.elements.message.value;
-    socket.emit("sendMessage", message);
+    socket.emit("sendMessage", message, (error) => {
+        // enable
+        $messageFromButton.removeAttribute('disabled');
+        $messageFromInput.value = '';
+        $messageFromInput.focus();
 
-    // enable
-    $messageFromButton.removeAttribute('disabled');
-    $messageFromInput.value = '';
-    $messageFromInput.focus();
-
-    if (error) {
-        return console.log(error);
-    }
-    console.log('Message was delivered..!');
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message was delivered..!');
+    });
 })
 
-document.querySelector('#location').addEventListener('click', () => {
+$locationButton.addEventListener('click', () => {
     if (!navigator.geolocation) {
         return alert('Navigator geolocation is not support in your browser')
     }
-
     // disabled button
-    $locationButton.setAttribute('disabled','disabled');
+    $locationButton.setAttribute('disabled', 'disabled');
 
     navigator.geolocation.getCurrentPosition((position) => {
         socket.emit('sendLoaction', {
@@ -71,9 +71,12 @@ document.querySelector('#location').addEventListener('click', () => {
 
 })
 
-
-socket.on('join', {username, room})
-
+socket.emit('join', {username, room},(error)=>{
+    if(error){
+        alert(error);
+        location.href = '/'
+    }
+})
 
 
 
