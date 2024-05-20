@@ -17,9 +17,11 @@ document.querySelector('#location').addEventListener('click', () => {
         return alert('Navigator geolocation is not support in your browser')
     }
     navigator.geolocation.getCurrentPosition((position) => {
-        socket.emit('sendLoaction',{
-            latitude : position.coords.latitude,
-            longitude : position.coords.longitude
+        socket.emit('sendLoaction', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        }, () => {
+            console.log('Location shared successfully...!');
         })
     })
 

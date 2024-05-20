@@ -24,8 +24,9 @@ io.on('connection', (socket) => {  // io.on => it is used to only when an cliet 
     })
 
     // *******Send Loaction start******
-    socket.on('sendLoaction', (loc) => {
+    socket.on('sendLoaction', (loc, callback) => {
         io.emit('message',`https://google.com/maps?q=${loc.latitude},${loc.longitude}`)
+        callback();
     })
     // *****Send Loaction end******
 
