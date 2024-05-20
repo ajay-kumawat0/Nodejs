@@ -23,6 +23,12 @@ io.on('connection', (socket) => {  // io.on => it is used to only when an cliet 
         io.emit('message', message); // send msg to every client who is connected to server
     })
 
+    // *******Send Loaction start******
+    socket.on('sendLoaction', (loc) => {
+        io.emit('message',`https://google.com/maps?q=${loc.latitude},${loc.longitude}`)
+    })
+    // *****Send Loaction end******
+
     // it is run when user is left or diconnected
     socket.on('disconnect', () => {
         io.emit('message', 'A user has left');

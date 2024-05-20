@@ -12,6 +12,18 @@ document.querySelector('#message-form').addEventListener('submit', (e) => {
     socket.emit("sendMessage", message);
 })
 
+document.querySelector('#location').addEventListener('click', () => {
+    if (!navigator.geolocation) {
+        return alert('Navigator geolocation is not support in your browser')
+    }
+    navigator.geolocation.getCurrentPosition((position) => {
+        socket.emit('sendLoaction',{
+            latitude : position.coords.latitude,
+            longitude : position.coords.longitude
+        })
+    })
+
+})
 
 
 
