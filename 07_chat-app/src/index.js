@@ -16,8 +16,12 @@ app.use(express.static(path.join(__dirname, '../public')));
 io.on('connection', (socket) => {  // io.on => it is used to only when an cliet is connected not used for when client is disconnected
     // console.log('Web socket is call from server');
 
-    socket.emit('message', 'Welcome to chat app');  // 'Hello' => name of the event  //  'Welcome to chat app' => callback msg provide to client 
-    socket.broadcast.emit('message', 'A new user is connected..!')
+    socket.on('join', ({ username, room }) => {
+        socket.join(room)
+        socket.emit('message', generateMessage('Welcome'));  // 'Hello' => name of the event  //  'Welcome to chat app' => callback msg provide to client 
+        socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined..!`))
+    })
+
 
     socket.on('sendMessage', (message) => {
         io.emit('message', message); // send msg to every client who is connected to server
@@ -25,7 +29,7 @@ io.on('connection', (socket) => {  // io.on => it is used to only when an cliet 
 
     // *******Send Loaction start******
     socket.on('sendLoaction', (loc, callback) => {
-        io.emit('message',`https://google.com/maps?q=${loc.latitude},${loc.longitude}`)
+        io.to('class').PORTemit('message',`https://google.com/maps?q=${loc.latitude},${loc.longitude}`)
         callback();
     })
     // *****Send Loaction end******
