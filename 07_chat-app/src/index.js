@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // server-side
 io.on('connection', (socket) => {  // io.on => it is used to only when an cliet is connected not used for when client is disconnected
-    // console.log('Web socket is call from server');
+    // console.log('New WebSocket connection');
 
     
     socket.on('join', ( options, callback) => {
@@ -27,28 +27,34 @@ io.on('connection', (socket) => {  // io.on => it is used to only when an cliet 
             return callback(error);
         }
         socket.join(user.room)
-        socket.emit('message', generateMessage('Welcome'));  // 'Hello' => name of the event  //  'Welcome to chat app' => callback msg provide to client 
-        socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined..!`))
+        socket.emit('message', generateMessage(`Admin`, 'Welcome!'));  // 'Hello' => name of the event  //  'Welcome to chat app' => callback msg provide to client 
+        socket.broadcast.to(user.room).emit('message', generateMessage('Admin',`${user.username} has joined..!`))
+        io.to(user.room).emit('roomData',{
+            room : user.room,
+            users : getUserInRoom(user.room)
+        })
 
-        callback(error);
+        callback();
         // socket.emit, io.emit, socket.broadcast.emit
         // io.to.emit, socket.broadcast.to.emit
     })
 
     socket.on('sendMessage', (message, callback) => { 
+        const user = getUser(socket.id)
         const filter = new Filter();
 
         if (filter.isProfane(message)) {
             return callback('Profane wrod are not allowed..!');
         }
 
-        io.to('class').emit('message', generateMessage(message)); // send msg to every client who is connected to server
+        io.to(user.room).emit('message', generateMessage(user.username,message)); // send msg to every client who is connected to server
         callback();
     })
 
     // *******Send Loaction start******
-    socket.on('sendLoaction', (loc, callback) => {
-        io.emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${loc.latitude},${loc.longitude}`))
+    socket.on('sendLocation', (loc, callback) => {
+        const user = getUser(socket.id);
+        io.to(user.room).emit('locationMessage', generateLocationMessage(user.username,`https://google.com/maps?q=${loc.latitude},${loc.longitude}`));
         callback();
     })
     // *****Send Loaction end******
@@ -57,7 +63,13 @@ io.on('connection', (socket) => {  // io.on => it is used to only when an cliet 
     // it is run when user is left or diconnected
     socket.on('disconnect', () => {
         const user = removeUser(socket.id);
-        io.to(user.room).emit('message', generateMessage(`${user.username} has left..!`));
+        if(user){
+            io.to(user.room).emit('message', generateMessage('Admin',`${user.username} has left..!`));
+            io.to(user.room).emit('roomData',{
+                room : user.room,
+                users : getUserInRoom(user.room)
+            })
+        }
     }) // 'disconnect' => this is build in functionalty
 
 
